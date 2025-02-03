@@ -15,6 +15,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Transactional
     public void saveUser(User user) {
         userRepository.save(user);
@@ -30,6 +34,16 @@ public class UserService {
         return opUser.orElse(null);
     }
 
+    public User findUserByUsername(String username) {
+        Optional<User> opUser = Optional.ofNullable(userRepository.findByUsername(username));
+        return opUser.orElse(null);
+    }
+
+    public User findUserByEmailAndSenha(String email, String senha){
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmailAndSenha(email, senha));
+        return userOptional.orElse(null);
+    }
+
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
@@ -38,7 +52,7 @@ public class UserService {
         return userRepository.findAllOtherUsers(id);
     }
 
-//    public User findUsernameByCodigoid(Long codigoid) {
-//        return userRepository.findUsernameByCodigoid(codigoid);
-//    }
+    public void save(User novoUser) {
+        userRepository.save(novoUser);
+    }
 }

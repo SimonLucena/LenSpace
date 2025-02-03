@@ -20,13 +20,19 @@ public class HomeController {
 
     @RequestMapping("/")
     public String index(Model model, Long id) {
-        String proxView = "index";
+        String proxView;
         Long codigoid = 1L;
         User user = userService.findUserById(codigoid);
         List<User> users = userService.findAllOtherUsers(codigoid);
 
-        model.addAttribute("user", user);
-        model.addAttribute("usersList", users);
+        if (user != null){
+            proxView = "index";
+            model.addAttribute("user", user);
+            model.addAttribute("usersList", users);
+        }else{
+            model.addAttribute("mensagemErro");
+            proxView = "redirect:/login";
+        }
         return proxView;
     }
 }
