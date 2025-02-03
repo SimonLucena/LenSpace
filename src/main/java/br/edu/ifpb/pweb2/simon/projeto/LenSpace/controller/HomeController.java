@@ -2,6 +2,7 @@ package br.edu.ifpb.pweb2.simon.projeto.LenSpace.controller;
 
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,18 +20,16 @@ public class HomeController {
     private UserService userService;
 
     @RequestMapping("/")
-    public String index(Model model, Long id) {
+    public String index(Model model, HttpSession session) {
         String proxView;
-        Long codigoid = 1L;
-        User user = userService.findUserById(codigoid);
-        List<User> users = userService.findAllOtherUsers(codigoid);
+        User user = (User) session.getAttribute("usuarioLogado");
 
         if (user != null){
+            List<User> users = userService.findAllOtherUsers(user.getCodigoid());
             proxView = "index";
             model.addAttribute("user", user);
             model.addAttribute("usersList", users);
         }else{
-            model.addAttribute("mensagemErro");
             proxView = "redirect:/login";
         }
         return proxView;

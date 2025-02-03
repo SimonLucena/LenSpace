@@ -8,14 +8,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
 @Controller
@@ -32,14 +30,14 @@ public class CadastroController {
         int IDADE_MINIMA = 18;
         try {
             // Converte a string para LocalDate (Formato esperado: YYYY-MM-DD)
-            LocalDate dataNascimento = LocalDate.parse(dataNascimentoStr, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            LocalDate dataNascimento = LocalDate.parse(dataNascimentoStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             LocalDate hoje = LocalDate.now();
 
             // Calcula a idade do usuário
             int idade = Period.between(dataNascimento, hoje).getYears();
 
             // Verifica se a idade é válida
-            return idade >= IDADE_MINIMA;
+            return (idade >= IDADE_MINIMA);
         } catch (Exception e) {
             return false;
         }
@@ -94,7 +92,7 @@ public class CadastroController {
 
     public String saveCadastroLogin(Model model, String nome, String username, String email, String senha, String dataNascimento, RedirectAttributes redirectAttributes) throws ParseException {
         Date dataNascimentoConvertida;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         dataNascimentoConvertida = sdf.parse(dataNascimento);
 
         User novoUser = new User();
