@@ -7,7 +7,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserFollowService {
@@ -21,6 +23,15 @@ public class UserFollowService {
     @Transactional
     public void saveUserFollow(UserFollow userFollow){
         userFollowRepository.save(userFollow);
+    }
+
+    public List<User> findAllByUserId(Long codigoid) {
+        System.out.println("Codigoid: "+codigoid);
+        List<UserFollow> followers = userFollowRepository.findAllByCodigoid(codigoid);
+        System.out.println("Seguidores: "+followers);
+        return followers.stream()
+                        .map(UserFollow::getFollow)
+                        .collect(Collectors.toList());
     }
 
 //    public List<User> findAllFollowByUser(User user){

@@ -40,7 +40,6 @@ public class HomeController {
 //            List<User> users = userService.findAllOtherUsers(user.getCodigoid());
             List<User> users = userService.findAllUsersNotFollowedByUser(user.getCodigoid());
             List<Post> posts = postService.findAllByUser(user);
-            System.out.println(users);
 
             if (users == null) users = new ArrayList<>();
             if (posts == null) posts = new ArrayList<>();
