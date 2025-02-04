@@ -102,7 +102,7 @@ public class CadastroController {
         novoUser.setSenha(senha); // Idealmente, a senha deve ser criptografada
         novoUser.setDataNascimento(dataNascimentoConvertida);
 
-        userService.save(novoUser);
+        userService.saveUser(novoUser);
 
         return "redirect:/";
     }

@@ -61,6 +61,7 @@ public class User {
     @Column(name = "administrador", nullable = false)
     @Setter
     private boolean administrador = false;
+    public void setAdministrador(boolean administrador) {this.administrador = administrador;}
 
     @Column(name = "data_criacao", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

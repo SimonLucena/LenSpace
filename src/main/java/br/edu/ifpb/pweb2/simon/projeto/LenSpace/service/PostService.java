@@ -20,7 +20,7 @@ public class PostService {
     }
 
     @Transactional
-    public void save(Post post) {
+    public void savePost(Post post) {
         postRepository.save(post);
     }
 

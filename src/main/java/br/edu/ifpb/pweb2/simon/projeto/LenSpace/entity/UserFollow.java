@@ -19,8 +19,10 @@ public class UserFollow {
     @ManyToOne
     @JoinColumn(name = "codigoid_user", nullable = false)
     private User user;
+    public void setUser(User user) {this.user = user;}
 
     @ManyToOne
     @JoinColumn(name = "codigoid_follow", nullable = false)
     private User follow;
+    public void setFollow(User follow) {this.follow = follow;}
 }

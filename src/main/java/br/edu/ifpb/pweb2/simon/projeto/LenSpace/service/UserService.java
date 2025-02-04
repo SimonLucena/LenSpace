@@ -52,7 +52,8 @@ public class UserService {
         return userRepository.findAllOtherUsers(id);
     }
 
-    public void save(User novoUser) {
-        userRepository.save(novoUser);
+
+    public List<User> findAllUsersNotFollowedByUser(Long id) {
+        return userRepository.findAllUsersNotFollowedBy(id);
     }
 }

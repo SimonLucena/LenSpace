@@ -18,9 +18,9 @@
             <button class="btn btn-outline-primary" type="submit" disabled>Buscar</button>
         </form>
         <div class="d-flex">
-            <a href="#" class="nav-link"><i class="fas fa-bell"></i></a>
-            <a href="#" class="nav-link"><i class="fas fa-comment"></i></a>
-            <a href="#" class="nav-link"><i class="fas fa-user"></i></a>
+<!--            <a href="#" class="nav-link"><i class="fas fa-bell"></i></a>-->
+<!--            <a href="#" class="nav-link"><i class="fas fa-comment"></i></a>-->
+<!--            <a href="#" class="nav-link"><i class="fas fa-user"></i></a>-->
         </div>
     </div>
 </nav>
@@ -58,7 +58,7 @@
                         <span th:if="${post.user != null}" th:text="${post.user.username}"></span>
                         <span th:if="${post.user == null}">Usuário Desconhecido</span>
                     </div>
-                    <img src="https://via.placeholder.com/600x300" class="card-img-top" alt="Foto de João">
+                    <img src="https://via.placeholder.com/600x300" class="card-img-top" alt="Foto desconhecida">
                     <div class="card-body">
                         <p class="card-text" th:if="${post.legenda != null}" th:text="${post.legenda}"></p>
                         <button class="btn btn-outline-primary" disabled>Curtir</button>
@@ -73,8 +73,11 @@
             <h5>Sugestões de Amigos</h5>
             <ul class="list-group">
                 <li class="list-group-item d-flex justify-content-between align-items-center" th:each="userItem: ${usersList}">
-                    <span><i class="fas fa-user"></i> <span th:text="${userItem.username}"></span></span>
-                    <button class="btn btn-sm btn-primary">Adicionar</button>
+                    <form th:action="@{/follow}" method="post">
+                        <span><i class="fas fa-user"></i> <span th:text="${userItem.username}"></span></span>
+                        <input type="hidden" name="userFollowId" th:value="${userItem.codigoid}">
+                        <button type="submit" class="btn btn-sm btn-primary">Adicionar</button>
+                    </form>
                 </li>
             </ul>
         </div>
