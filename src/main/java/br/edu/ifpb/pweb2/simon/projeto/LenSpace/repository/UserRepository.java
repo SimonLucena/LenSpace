@@ -13,8 +13,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByUsername(String username);
 
     @Query("from User u where u.codigoid != :id")
-    public List<User> findAllOtherUsers(@Param("id") Long id);
+    List<User> findAllOtherUsers(@Param("id") Long id);
 
-    @Query("from User u where u.email = :email and u.senha = :senha")
-    User findByEmailAndSenha(String email, String senha);
+    @Query("from User u where (u.email = :emailUsername or u.username = :emailUsername) and u.senha = :senha")
+    User findUserByEmailOrUsernameAndSenha(String emailUsername, String senha);
 }

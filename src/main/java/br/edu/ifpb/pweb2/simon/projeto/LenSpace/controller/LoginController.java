@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -17,30 +18,27 @@ public class LoginController {
     private UserService userService;
 
     @Autowired
-    public void UserController(UserService userService){
+    public LoginController(UserService userService) {
         this.userService = userService;
     }
 
-    @RequestMapping("login")
+    @RequestMapping("/login")
     public String showLoginForm() {
         return "form-login";
     }
 
-    @PostMapping("processLogin")
-    public String processLoginForm(Model model, String email, String senha, RedirectAttributes redirectAttributes, HttpSession session) {
-        String proxView;
-
-        User user = userService.findUserByEmailAndSenha(email, senha);
-        System.out.println(user);
+    @PostMapping("/processLogin")
+    public ModelAndView processLoginForm(String emailUsername, String senha, HttpSession session) {
+        ModelAndView model = new ModelAndView();
+        User user = userService.findUserByEmailOrUsernameAndSenha(emailUsername, senha);
 
         if (user != null){
             session.setAttribute("usuarioLogado", user);
-            proxView = "redirect:../lenspace";
+            model.setViewName("redirect:/");
         }else{
-            String mensagemErro = "Usuário ou senha incorretos! Tente novamente.";
-            redirectAttributes.addFlashAttribute("mensagemErro", mensagemErro);
-            proxView = "redirect:/login";
+            model.setViewName("form-login");
+            model.addObject("mensagemErro", "Usuário ou senha incorretos! Tente novamente.");
         }
-        return proxView;
+        return model;
     }
 }

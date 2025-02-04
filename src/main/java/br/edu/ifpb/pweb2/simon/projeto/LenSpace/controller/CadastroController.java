@@ -55,7 +55,7 @@ public class CadastroController {
     }
 
     @PostMapping("processCadastro")
-    public String processCadastroForm(Model model, String nome, String username, String email, String senha, String dataNascimento, RedirectAttributes redirectAttributes) throws ParseException {
+    public String processCadastroForm(String nome, String username, String email, String senha, String dataNascimento, RedirectAttributes redirectAttributes) throws ParseException {
         // Verifica se todos os campos foram preenchidos
         if (nome == null || username == null || email == null || senha == null || dataNascimento == null) {
             return adicionarMensagemErro(redirectAttributes, "Preencha todos os campos.", "mensagemErro");
@@ -82,7 +82,7 @@ public class CadastroController {
         }
 
         // Cadastro válido, redireciona para index
-        return saveCadastroLogin(model, nome, username, email, senha, dataNascimento, redirectAttributes);
+        return saveCadastroLogin(nome, username, email, senha, dataNascimento);
     }
 
     private String adicionarMensagemErro(RedirectAttributes redirectAttributes, String mensagem, String atributo) {
@@ -90,7 +90,7 @@ public class CadastroController {
         return "redirect:/cadastro";
     }
 
-    public String saveCadastroLogin(Model model, String nome, String username, String email, String senha, String dataNascimento, RedirectAttributes redirectAttributes) throws ParseException {
+    public String saveCadastroLogin(String nome, String username, String email, String senha, String dataNascimento) throws ParseException {
         Date dataNascimentoConvertida;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         dataNascimentoConvertida = sdf.parse(dataNascimento);

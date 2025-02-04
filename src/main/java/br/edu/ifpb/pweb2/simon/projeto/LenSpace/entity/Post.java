@@ -19,15 +19,20 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigoid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "codigoid_user", nullable = false)
     private User user;
+    public void setUser(User user){this.user = user;}
+    public User getUser() {return user;}
 
     @Column(name = "legenda")
     private String legenda;
+    public void setLegenda(String legenda){this.legenda = legenda;}
+    public String getLegenda(){return legenda;}
 
     @Column(name = "imagem")
     private String imagem;
+    public void setImagem(String imagem){this.imagem = imagem;}
 
     @Column(name = "data_post", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

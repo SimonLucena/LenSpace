@@ -39,8 +39,8 @@ public class UserService {
         return opUser.orElse(null);
     }
 
-    public User findUserByEmailAndSenha(String email, String senha){
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmailAndSenha(email, senha));
+    public User findUserByEmailOrUsernameAndSenha(String email, String senha){
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmailOrUsernameAndSenha(email, senha));
         return userOptional.orElse(null);
     }
 
