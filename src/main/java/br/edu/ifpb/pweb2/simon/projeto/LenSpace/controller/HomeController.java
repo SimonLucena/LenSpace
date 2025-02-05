@@ -39,13 +39,13 @@ public class HomeController {
 
         if (user != null){
 //            List<User> users = userService.findAllOtherUsers(user.getCodigoid());
-            List<User> users = userService.findAllUsersNotFollowedByUser(user.getCodigoid());
-            List<Post> posts = postService.findAllByUser(user);
+            List<User> users = userService.findAllUsersNotFollowedByUserAndActive(user.getCodigoid());
+            List<Post> posts = postService.findAllByActiveUser(user);
 
             if (users == null) users = new ArrayList<>();
             if (posts == null) posts = new ArrayList<>();
 
-            model.setViewName("redirect:/");
+            model.setViewName("index");
             model.addObject("user", user);
             model.addObject("usersList", users);
             model.addObject("postsList", posts);

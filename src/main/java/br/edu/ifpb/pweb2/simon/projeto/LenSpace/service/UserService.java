@@ -56,4 +56,20 @@ public class UserService {
     public List<User> findAllUsersNotFollowedByUser(Long id) {
         return userRepository.findAllUsersNotFollowedBy(id);
     }
+
+    public void desativarUser(User user) {
+        userRepository.desativarUserByCodigoid(user.getCodigoid());
+    }
+
+    public void reativarUser(User user) {
+        userRepository.reativarUserByCodigoid(user.getCodigoid());
+    }
+
+    public List<User> findAllUsersNotAdmin() {
+        return userRepository.findAllUsersNotAdmin();
+    }
+
+    public List<User> findAllUsersNotFollowedByUserAndActive(Long codigoid) {
+        return userRepository.findAllUsersNotFollowedByUserAndActive(codigoid);
+    }
 }

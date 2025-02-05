@@ -1,10 +1,9 @@
 package br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.Date;
 
@@ -24,7 +23,7 @@ public class User {
 
     @Setter
     @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    public String email;
     public void setEmail(String email) {
         this.email = email;
     }
@@ -42,6 +41,7 @@ public class User {
     public void setNome(String nome) {
         this.nome = nome;
     }
+    public String getNome() { return this.nome; }
 
     @Getter
     @Setter
@@ -60,11 +60,20 @@ public class User {
 
     @Column(name = "administrador", nullable = false)
     @Setter
+    @Getter
     private boolean administrador = false;
     public void setAdministrador(boolean administrador) {this.administrador = administrador;}
+    public boolean isAdministrador() {return this.administrador;}
 
     @Column(name = "data_criacao", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @Setter
     private Date dataCriacao = new Date();
+    public Date getDataCriacao() {return dataCriacao;}
+
+    @Column(name = "ativo", nullable = false)
+    @Setter
+    private boolean ativo = true;
+    public void setAtivo(boolean ativo) {this.ativo = ativo;}
+    public boolean isAtivo() {return this.ativo;}
 }

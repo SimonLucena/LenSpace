@@ -27,4 +27,8 @@ public class PostService {
     public List<Post> findAllByUser(User user) {
         return postRepository.findAllByUser(user.getCodigoid());
     }
+
+    public List<Post> findAllByActiveUser(User user) {
+        return postRepository.findAllByUserAtivo(user.getCodigoid());
+    }
 }
