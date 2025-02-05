@@ -32,8 +32,8 @@ public class Post {
     public String getLegenda(){return legenda;}
 
     @Column(name = "imagem")
-    private String imagem;
-    public void setImagem(String imagem){this.imagem = imagem;}
+    public String imagem;
+    public void setImagem(String imagem) {this.imagem = imagem;}
 
     @Column(name = "data_post", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

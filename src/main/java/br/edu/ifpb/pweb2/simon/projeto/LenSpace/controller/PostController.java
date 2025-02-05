@@ -6,11 +6,20 @@ import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostLikeService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,22 +30,34 @@ public class PostController {
     @Autowired
     private PostLikeService postLikeService;
 
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+
     @PostMapping("/post")
-    public ModelAndView post(String legenda, String imagem, HttpSession session) {
+    public ModelAndView post(String postLegenda, MultipartFile postImagem, HttpSession session, ModelAndView model) {
         User user = (User) session.getAttribute("usuarioLogado");
 
         if (user == null) {
             return new ModelAndView("redirect:/login");
         }
 
-        Post post = new Post();
-        post.setUser(user);
-        post.setLegenda(legenda);
-        post.setImagem(imagem);
+        try {
+            String fileName = postImagem.getOriginalFilename();
+            Path filePath = Paths.get(UPLOAD_DIR + fileName);
 
-        postService.savePost(post);
+            Files.createDirectories(filePath.getParent());
+            Files.write(filePath, postImagem.getBytes());
 
-        return new ModelAndView("redirect:/");
+            Post post = new Post();
+            post.setUser(user);
+            post.setLegenda(postLegenda);
+            post.setImagem("/uploads/" + fileName);
+
+            postService.savePost(post);
+        }catch (IOException e){
+            model.addObject("mensagemErro", "Erro ao fazer upload da imagem.");
+        }
+        model.setViewName("redirect:/");
+        return model;
     }
 
     @PostMapping("/like")
@@ -51,7 +72,23 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    public long likeCount(Long postId){
-        return postLikeService.countLikes(postId);
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, Object>> uploadImage(HttpSession session, MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String fileName = file.getOriginalFilename();
+            Path filePath = Paths.get(UPLOAD_DIR + fileName);
+
+            Files.createDirectories(filePath.getParent());
+            Files.write(filePath, file.getBytes());
+
+            String fileUrl = "/uploads/" + fileName;
+            response.put("fileUrl", fileUrl);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            response.put("error", "Erro ao tentar salvar a imagem para a postagem.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 }
