@@ -41,7 +41,7 @@
                             </tr>
                             </thead>
                             <tbody class="table-group-divider">
-                            <tr th:each="user : ${usersList}">
+                            <tr th:each="user : ${usersGen}">
                                 <td th:text="${user.getCodigoid()}"></td>
                                 <td th:text="${user.getNome()}"></td>
                                 <td th:text="${user.email}"></td>

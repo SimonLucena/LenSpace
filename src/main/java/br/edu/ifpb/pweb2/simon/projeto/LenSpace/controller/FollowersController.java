@@ -39,7 +39,7 @@ public class FollowersController {
 
     private void setFollowerPageAtr(ModelAndView model, User user) {
         List<User> followers = userFollowService.findAllByUserId(user.getCodigoid());
-        List<User> users = userService.findAllUsersNotFollowedByUser(user.getCodigoid());
+        List<User> users = userService.findAllUsersNotFollowedByUserAndActive(user.getCodigoid());
         model.addObject("followerList", followers);
         model.addObject("user", user);
         model.addObject("usersList", users);

@@ -4,6 +4,7 @@ import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Post;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.UserFollow;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.UserRepository;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostLikeService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserFollowService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserService;
@@ -16,9 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class HomeController {
@@ -30,6 +32,8 @@ public class HomeController {
     private UserService userService;
     @Autowired
     private PostService postService;
+    @Autowired
+    private PostLikeService postLikeService;
     @Autowired
     private UserFollowService userFollowService;
 
@@ -45,10 +49,18 @@ public class HomeController {
             if (users == null) users = new ArrayList<>();
             if (posts == null) posts = new ArrayList<>();
 
+            Map<Long, Long> likeCounts = new HashMap<>();
+
+            // Calcula o número de curtidas para cada post
+            for (Post post : posts) {
+                likeCounts.put(post.getCodigoid(), postLikeService.countLikes(post.getCodigoid()));
+            }
+
             model.setViewName("index");
             model.addObject("user", user);
             model.addObject("usersList", users);
             model.addObject("postsList", posts);
+            model.addObject("likeCounts", likeCounts);
         }else{
             model.setViewName("redirect:/login");
         }
@@ -59,24 +71,6 @@ public class HomeController {
     public ModelAndView logoutUser(HttpSession session) {
         session.invalidate();
         return new ModelAndView("redirect:/login");
-    }
-
-    @PostMapping("/post")
-    public ModelAndView post(String legenda, String imagem, HttpSession session) {
-        User user = (User) session.getAttribute("usuarioLogado");
-
-        if (user == null) {
-            return new ModelAndView("redirect:/login");
-        }
-
-        Post post = new Post();
-        post.setUser(user);
-        post.setLegenda(legenda);
-        post.setImagem(imagem);
-
-        postService.savePost(post);
-
-        return new ModelAndView("redirect:/");
     }
 
     @PostMapping("/follow")

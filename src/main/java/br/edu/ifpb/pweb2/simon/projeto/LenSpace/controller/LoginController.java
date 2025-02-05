@@ -39,7 +39,10 @@ public class LoginController {
         ModelAndView model = new ModelAndView();
         User user = userService.findUserByEmailOrUsernameAndSenha(emailUsername, senha);
 
-        if (user != null){
+        if(!user.isAtivo()){
+            model.setViewName("form-login");
+            model.addObject("mensagemErro", "Usuário suspenso por administação.");
+        }else if(user != null){
             session.setAttribute("usuarioLogado", user);
             model.setViewName("redirect:/");
         }else{

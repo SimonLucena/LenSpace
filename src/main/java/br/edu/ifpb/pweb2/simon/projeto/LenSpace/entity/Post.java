@@ -18,6 +18,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigoid;
+    public Long getCodigoid() {return codigoid;}
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "codigoid_user", nullable = false)

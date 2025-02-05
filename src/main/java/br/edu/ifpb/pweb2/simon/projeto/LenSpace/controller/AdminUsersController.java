@@ -22,9 +22,11 @@ public class AdminUsersController {
         User user = (User) session.getAttribute("usuarioLogado");
 
         if (user != null) {
+            List<User> usersList = userService.findAllUsersNotFollowedByUserAndActive(user.getCodigoid());
             List<User> users = userService.findAllUsersNotAdmin();
             model.addObject("user", user);
-            model.addObject("usersList", users);
+            model.addObject("usersList", usersList);
+            model.addObject("usersGen", users);
             model.setViewName("grid-admin-users");
         }else {
             model.setViewName("redirect:/login");

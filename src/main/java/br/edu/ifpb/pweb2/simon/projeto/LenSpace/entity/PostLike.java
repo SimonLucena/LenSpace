@@ -20,8 +20,12 @@ public class PostLike {
     @ManyToOne
     @JoinColumn(name = "codigoid_post", nullable = false)
     private Post post;
+    public Post getPost() {return post;}
+    public void setPost(Post post) {this.post = post;}
 
     @ManyToOne
     @JoinColumn(name = "codigoid_user_like", nullable = false)
-    private Post user;
+    private User user;
+    public User getUser() {return user;}
+    public void setUser(User user) {this.user = user;}
 }
