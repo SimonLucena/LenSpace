@@ -21,7 +21,7 @@
                 <div class="card-body">
                     <form action="lancarPost" method="post" id="makePost" enctype="multipart/form-data">
                         <!-- Upload -->
-                        <input type="file" name="postImagem" class="form-control mb-2">
+                        <input type="file" name="postImagem" id="postImagem" class="form-control mb-2">
                         <!-- Legenda -->
                         <textarea name="postLegenda" class="form-control mb-2" placeholder="Digite uma legenda..."></textarea>
 
@@ -63,16 +63,16 @@
                         </button>
 
                         <!-- Comentário -->
-                        <button class="btn btn-outline-secondary comment-btn" th:data-postid="${post.codigoid}">Comentar</button>
+                        <button class="btn btn-outline-secondary comment-btn" th:data-postid="${post.getCodigoid()}">Comentar</button>
                         <!-- Área de Comentário Oculta -->
-                        <div class="comment-box mt-2 d-none" th:id="'comment-box-' + ${post.codigoid}">
-                            <textarea class="form-control mb-2" th:id="'comment-text-' + ${post.codigoid}" placeholder="Digite seu comentário..."></textarea>
-                            <button class="btn btn-primary submit-comment" th:data-postid="${post.codigoid}">Enviar</button>
+                        <div class="comment-box mt-2 d-none" th:id="'comment-box-' + ${post.getCodigoid()}">
+                            <textarea class="form-control mb-2" th:id="'comment-text-' + ${post.getCodigoid()}" placeholder="Digite seu comentário..."></textarea>
+                            <button class="btn btn-primary submit-comment" th:data-postid="${post.getCodigoid()}">Enviar</button>
                         </div>
                         <!-- Lista de Comentários -->
                         <div class="comments-list mt-3" th:id="'comments-list-' + ${post.codigoid}">
-                            <div th:each="comment : ${post.comments}">
-                                <p><strong th:text="${comment.user.username}"></strong>: <span th:text="${comment.comentario}"></span></p>
+                            <div th:each="comment : ${postComentarios[post.getCodigoid()]}">
+                                <p><strong th:text="${comment.getUser().username}"></strong>: <span th:text="${comment.comentario}"></span></p>
                             </div>
                         </div>
                     </div>
@@ -88,6 +88,18 @@
 <div th:replace="layouts/main-view :: footer"></div>
 
 <script>
+    // CHECAR POR TAMANHO DA IMAGEM
+    document.getElementById("postImagem").addEventListener("change", function() {
+        const maxSize = 10 * 1024 * 1024;
+        const file = this.files[0];
+
+        if (file && file.size > maxSize) {
+            alert("A imagem selecionada é muito grande! O tamanho máximo permitido é 10MB.");
+            this.value = "";
+        }
+    });
+
+    // CURTIR POSTAGEM
     document.querySelectorAll(".like-btn").forEach(button => {
         button.addEventListener("click", function () {
             const postId = this.getAttribute("data-postid");
@@ -114,16 +126,8 @@
                 .catch(error => console.error("Erro:", error));
         });
     });
-    document.getElementById("postImagem").addEventListener("change", function() {
-        const maxSize = 10 * 1024 * 1024;
-        const file = this.files[0];
 
-        if (file && file.size > maxSize) {
-            alert("A imagem selecionada é muito grande! O tamanho máximo permitido é 10MB.");
-            this.value = "";
-        }
-    });
-
+    // CADASTRO E ATUALIZAÇÃO DE COMENTÁRIO
     document.querySelectorAll(".comment-btn").forEach(button => {
         button.addEventListener("click", function () {
             const postId = this.getAttribute("data-postid");
@@ -142,7 +146,7 @@
                 return;
             }
 
-            fetch("/comments/add", {
+            fetch("/lenspace/saveComment", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"

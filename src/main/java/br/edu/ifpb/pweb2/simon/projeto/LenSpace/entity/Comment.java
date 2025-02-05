@@ -22,10 +22,11 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "codigoid_user", nullable = false)
     private User user;
+    public User getUser() {return user;}
     public void setUser(User user) {this.user = user;}
 
     @Column(nullable = false)
-    private String comentario;
+    public String comentario;
     public void setComentario(String comentario) {this.comentario = comentario;}
 
     @Column(name = "data_comment", nullable = false)

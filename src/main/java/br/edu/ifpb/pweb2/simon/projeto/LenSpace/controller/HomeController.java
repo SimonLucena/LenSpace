@@ -1,13 +1,11 @@
 package br.edu.ifpb.pweb2.simon.projeto.LenSpace.controller;
 
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Comment;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Post;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.UserFollow;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.UserRepository;
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostLikeService;
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostService;
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserFollowService;
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserService;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,8 @@ public class HomeController {
     @Autowired
     private PostLikeService postLikeService;
     @Autowired
+    private PostCommentService postCommentService;
+    @Autowired
     private UserFollowService userFollowService;
 
     @RequestMapping("/")
@@ -51,10 +51,12 @@ public class HomeController {
             if (posts == null) posts = new ArrayList<>();
 
             Map<Long, Long> likeCounts = new HashMap<>();
+            Map<Long, List<Comment>> postComentarios = new HashMap<>();
 
             // Calcula o número de curtidas para cada post
             for (Post post : posts) {
                 likeCounts.put(post.getCodigoid(), postLikeService.countLikes(post.getCodigoid()));
+                postComentarios.put(post.getCodigoid(), postCommentService.findCommentByPostCodigoid(post.getCodigoid()));
             }
 
             model.setViewName("index");
@@ -62,6 +64,7 @@ public class HomeController {
             model.addObject("usersList", users);
             model.addObject("postsList", posts);
             model.addObject("postsCurtidos", postsCurtidos);
+            model.addObject("postComentarios", postComentarios);
             model.addObject("likeCounts", likeCounts);
         }else{
             model.setViewName("redirect:/login");
