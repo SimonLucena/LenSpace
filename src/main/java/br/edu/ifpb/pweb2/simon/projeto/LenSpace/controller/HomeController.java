@@ -45,6 +45,7 @@ public class HomeController {
 //            List<User> users = userService.findAllOtherUsers(user.getCodigoid());
             List<User> users = userService.findAllUsersNotFollowedByUserAndActive(user.getCodigoid());
             List<Post> posts = postService.findAllByActiveUser(user);
+            List<Long> postsCurtidos = postLikeService.getLikedPostsByUser(user);
 
             if (users == null) users = new ArrayList<>();
             if (posts == null) posts = new ArrayList<>();
@@ -60,6 +61,7 @@ public class HomeController {
             model.addObject("user", user);
             model.addObject("usersList", users);
             model.addObject("postsList", posts);
+            model.addObject("postsCurtidos", postsCurtidos);
             model.addObject("likeCounts", likeCounts);
         }else{
             model.setViewName("redirect:/login");

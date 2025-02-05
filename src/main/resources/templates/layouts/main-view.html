@@ -8,9 +8,11 @@
 </head>
 <body>
 <!-- Navbar -->
-<nav th:fragment="header-top" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+<nav th:fragment="header-top" class="navbar navbar-expand-lg fixed-top" id="navbar-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">LenSpace</a>
+        <a class="navbar-brand" href="#">
+            <h2>LenSpace</h2>
+        </a>
 <!--        <form class="d-flex">-->
 <!--            <input class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Search" disabled>-->
 <!--            <button class="btn btn-outline-primary" type="submit" disabled>Buscar</button>-->
@@ -22,7 +24,7 @@
 
 <!-- Sidebar Esquerda -->
 <div th:fragment="sidebar-left" class="col-md-3 d-none d-md-block border-end min-vh-100">
-    <h3 th:text="${user.username}" style="padding-left:5px"></h3>
+    <h3 th:text="${user.username}" style="padding-left:5px" id="usernameTitle"></h3>
     <ul class="list-group">
         <li class="list-group-item"><a th:href="@{/}"> <i class="fas fa-user"></i> Home</a></li>
         <li class="list-group-item"><a th:href="@{/followers}"> <i class="fas fa-users"></i> Seguidores</a></li>
@@ -36,7 +38,7 @@
 
 <!-- Sidebar Direita -->
 <div th:fragment="sidebar-right" class="col-md-3 d-none d-md-block border-start min-vh-100">
-    <h5>Sugestões de Amigos</h5>
+    <h5 id="usuariosList">Sugestões de Amigos</h5>
     <ul class="list-group">
         <li class="list-group-item d-flex justify-content-between align-items-center" th:each="userItem: ${usersList}">
                 <span><i class="fas fa-user"></i> <span th:text="${userItem.username}"></span></span>
@@ -47,6 +49,14 @@
         </li>
     </ul>
 </div>
+
+<!-- Footer -->
+<footer th:fragment="footer" class="footer mt-auto py-3 bg-light">
+    <div class="container text-center">
+        <p class="mb-1">&copy; 2025 LenSpace - Todos os direitos reservados</p>
+        <p class="mb-1">Desenvolvido por Simon Lucena de Castro</p>
+    </div>
+</footer>
 
 </body>
 </html>

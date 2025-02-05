@@ -19,11 +19,12 @@
             <div class="card mb-3">
                 <!-- Campo para postar -->
                 <div class="card-body">
-                    <form action="post" method="post" id="makePost" enctype="multipart/form-data">
-                        <textarea name="postLegenda" class="form-control mb-2" placeholder="Digite uma legenda..."></textarea>
-
+                    <form action="lancarPost" method="post" id="makePost" enctype="multipart/form-data">
                         <!-- Upload -->
                         <input type="file" name="postImagem" class="form-control mb-2">
+                        <!-- Legenda -->
+                        <textarea name="postLegenda" class="form-control mb-2" placeholder="Digite uma legenda..."></textarea>
+
                         <img id="imgPreview" src="#" alt="Prévia" style="display: none;max-width: 100%; height: auto">
 
                         <button class="btn btn-primary" type="submit">Publicar</button>
@@ -34,18 +35,46 @@
             <div th:each="post : ${postsList}">
                 <!-- Postagems -->
                 <div class="card mb-3">
+                    <!-- Username -->
                     <div class="card-header">
                         <i class="fas fa-user"></i>
                         <span th:if="${post.user != null}" th:text="${post.user.username}"></span>
                         <span th:if="${post.user == null}">Usuário Desconhecido</span>
                     </div>
+                    <!-- Imagem -->
                     <img th:if="${post.imagem != null}" th:src="@{${post.imagem}}" class="card-img-top" alt="Foto desconhecida">
+
                     <div class="card-body">
+                        <!-- Legenda -->
                         <p class="card-text" th:if="${post.legenda != null}" th:text="${post.legenda}"></p>
-                        <button class="btn btn-outline-primary like-btn" th:data-postid="${post.getCodigoid()}" th:data-liked="false">
-                            Curtir <span class="like-count" th:text="${likeCounts[post.codigoid]}">0</span>
+
+                        <!-- Curtir -->
+                        <button th:if="${!postsCurtidos.contains(post.getCodigoid())}" class="btn btn-outline-primary like-btn" th:data-postid="${post.getCodigoid()}" th:data-liked="${postsCurtidos.contains(post.getCodigoid())}">
+                            <span id="statusLiked">
+                                <span class="like-count" th:text="${likeCounts[post.codigoid]}">0</span>
+                                <span><i class='fa-solid fa-thumbs-up'></i></span>
+                            </span>
                         </button>
-                        <button class="btn btn-outline-secondary" disabled>Comentar</button>
+                        <button th:if="${postsCurtidos.contains(post.getCodigoid())}" class="btn btn-danger like-btn" th:data-postid="${post.getCodigoid()}" th:data-liked="${postsCurtidos.contains(post.getCodigoid())}">
+                            <span id="statusLiked">
+                                <span class="like-count" th:text="${likeCounts[post.codigoid]}">0</span>
+                                <span><i class='fa-regular fa-thumbs-down'></i></span>
+                            </span>
+                        </button>
+
+                        <!-- Comentário -->
+                        <button class="btn btn-outline-secondary comment-btn" th:data-postid="${post.codigoid}">Comentar</button>
+                        <!-- Área de Comentário Oculta -->
+                        <div class="comment-box mt-2 d-none" th:id="'comment-box-' + ${post.codigoid}">
+                            <textarea class="form-control mb-2" th:id="'comment-text-' + ${post.codigoid}" placeholder="Digite seu comentário..."></textarea>
+                            <button class="btn btn-primary submit-comment" th:data-postid="${post.codigoid}">Enviar</button>
+                        </div>
+                        <!-- Lista de Comentários -->
+                        <div class="comments-list mt-3" th:id="'comments-list-' + ${post.codigoid}">
+                            <div th:each="comment : ${post.comments}">
+                                <p><strong th:text="${comment.user.username}"></strong>: <span th:text="${comment.comentario}"></span></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -55,12 +84,14 @@
         <div th:replace="layouts/main-view :: sidebar-right"></div>
     </div>
 </div>
+<!-- Sidebar Direita -->
+<div th:replace="layouts/main-view :: footer"></div>
 
 <script>
     document.querySelectorAll(".like-btn").forEach(button => {
         button.addEventListener("click", function () {
-            console.log("Clicou");
             const postId = this.getAttribute("data-postid");
+            const curtido = this.getAttribute("data-liked") === "true";
             fetch("/lenspace/like", {
                 method: "POST",
                 headers: {
@@ -74,56 +105,68 @@
                         alert(data.error);
                     } else {
                         this.setAttribute("data-liked", data.liked);
-                        this.innerHTML = (data.liked ? "Descurtir" : "Curtir") + " <span class='like-count'>" + data.likeCount + "</span>";
+                        this.classList.toggle("btn-danger", data.liked);
+                        this.classList.toggle("btn-outline-primary", !data.liked);
+                        const mudarIcone = this.querySelector("#statusLiked");
+                        mudarIcone.innerHTML = " <span class='like-count'>" + data.likeCount + "</span> " + (data.liked ?  "<i class='fa-regular fa-thumbs-down'></i>" : "<i class='fa-solid fa-thumbs-up'>")
                     }
                 })
                 .catch(error => console.error("Erro:", error));
         });
     });
+    document.getElementById("postImagem").addEventListener("change", function() {
+        const maxSize = 10 * 1024 * 1024;
+        const file = this.files[0];
 
-    // document.getElementById("postImagem").addEventListener("change", function(event) {
-    //     const file = event.target.file[0];
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = function (e){
-    //             document.getElementById("imgPreview").src = e.target.result;
-    //             document.getElementById("imgPreview").style.display = "block";
-    //         };
-    //         reader.readAsDataURL(file)
-    //     }
-    // });
-    //
-    // document.getElementById("submitPost").addEventListener("click", function (){
-    //     const legenda = document.getElementById("postLegenda").value;
-    //     const fileInput = document.getElementById("postImagem");
-    //
-    //     if (!fileInput.files.length){
-    //         alert("Selecione uma imagem.");
-    //         return;
-    //     }
-    //
-    //     const file = fileInput.files[0];
-    //     const formData = new FormData();
-    //     formData.append("file", file);
-    //
-    //     fetch("/lenspace/upload", {
-    //         method: "POST",
-    //         body: formData
-    //     })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             if (data.imageUrl) {
-    //                 fetch("lenspace/post", {
-    //                     method: "POST",
-    //                     headers: {"Content-Type": "aplication/json"},
-    //                     body: JSON.stringify({legenda: legenda, imagem: data.imageUrl})
-    //                 }).then(() => location.reload());
-    //             }else {
-    //                 alert("Erro ao enviar a mensagem.");
-    //             }
-    //         })
-    //         .catch(error => console.error("Erro:", error))
-    // });
+        if (file && file.size > maxSize) {
+            alert("A imagem selecionada é muito grande! O tamanho máximo permitido é 10MB.");
+            this.value = "";
+        }
+    });
+
+    document.querySelectorAll(".comment-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const postId = this.getAttribute("data-postid");
+            const commentBox = document.getElementById("comment-box-" + postId);
+            commentBox.classList.toggle("d-none");
+        });
+    });
+
+    document.querySelectorAll(".submit-comment").forEach(button => {
+        button.addEventListener("click", function () {
+            const postId = this.getAttribute("data-postid");
+            const commentText = document.getElementById("comment-text-" + postId).value.trim();
+
+            if (commentText === "") {
+                alert("O comentário não pode estar vazio!");
+                return;
+            }
+
+            fetch("/comments/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `postId=${postId}&comentario=${encodeURIComponent(commentText)}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // Atualiza a lista de comentários
+                        const commentsList = document.getElementById("comments-list-" + postId);
+                        const newComment = document.createElement("p");
+                        newComment.innerHTML = `<strong>${data.username}</strong>: ${data.comentario}`;
+                        commentsList.appendChild(newComment);
+
+                        // Limpa o campo de comentário
+                        document.getElementById("comment-text-" + postId).value = "";
+                    }
+                })
+                .catch(error => console.error("Erro ao comentar:", error));
+        });
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

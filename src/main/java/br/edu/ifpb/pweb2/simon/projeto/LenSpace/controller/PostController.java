@@ -32,7 +32,7 @@ public class PostController {
 
     private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
-    @PostMapping("/post")
+    @PostMapping("lancarPost")
     public ModelAndView post(String postLegenda, MultipartFile postImagem, HttpSession session, ModelAndView model) {
         User user = (User) session.getAttribute("usuarioLogado");
 

@@ -8,6 +8,7 @@ import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,5 +36,9 @@ public class PostLikeService {
 
     public long countLikes(Long postId) {
         return postLikeRepository.countByPostCodigoid(postId);
+    }
+
+    public List<Long> getLikedPostsByUser(User user) {
+        return postLikeRepository.findLikedPostsByUserCodigoid(user.getCodigoid());
     }
 }

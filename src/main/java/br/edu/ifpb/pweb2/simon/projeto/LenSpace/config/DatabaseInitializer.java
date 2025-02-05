@@ -66,12 +66,14 @@ public class DatabaseInitializer {
                 Post postAdmin = new Post();
                 postAdmin.setUser(adminUser);
                 postAdmin.setLegenda("Teste de post Admin");
+                postAdmin.setImagem("/uploads/IMG_9342.JPG");
                 postRepository.save(postAdmin);
 
                 // Post para User1
                 Post postUser1 = new Post();
                 postUser1.setUser(user1);
                 postUser1.setLegenda("Teste de post User1");
+                postUser1.setImagem("/uploads/IMG_9385.JPG");
                 postRepository.save(postUser1);
 
                 // Post para User2

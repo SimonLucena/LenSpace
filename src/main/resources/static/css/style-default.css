@@ -10,3 +10,23 @@
 .fa-user{
     color: steelblue;
 }
+#navbar-top{
+    background-color: darkred;
+}
+.navbar-brand {
+    color: white;
+    font-weight: bolder;
+}
+
+.navbar-brand:hover {
+    color: white;
+    font-weight: bolder;
+}
+
+#usernameTitle{
+    margin-top: 10px;
+}
+
+#usuariosList{
+    margin-top: 10px;
+}

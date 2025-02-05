@@ -19,8 +19,10 @@ public class PostComment {
     @ManyToOne
     @JoinColumn(name = "codigoid_post", nullable = false)
     private Post post;
+    public void setPost(Post post) {this.post = post;}
 
     @ManyToOne
     @JoinColumn(name = "codigoid_comment", nullable = false)
     private Comment comment;
+    public void setComment(Comment comment) {this.comment = comment;}
 }

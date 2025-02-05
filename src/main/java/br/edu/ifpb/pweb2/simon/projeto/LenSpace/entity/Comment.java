@@ -17,13 +17,16 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigoid;
+    public Long getCodigoid() {return codigoid;}
 
     @ManyToOne
     @JoinColumn(name = "codigoid_user", nullable = false)
     private User user;
+    public void setUser(User user) {this.user = user;}
 
     @Column(nullable = false)
     private String comentario;
+    public void setComentario(String comentario) {this.comentario = comentario;}
 
     @Column(name = "data_comment", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

@@ -5,6 +5,7 @@ import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PostLikeRepository extends JpaRepository<PostLike, Integer> {
@@ -14,4 +15,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Integer> {
 
     @Query("select count(pl.codigoid) from PostLike pl where pl.post.codigoid = :postId")
     long countByPostCodigoid(Long postId);
+
+    @Query("select pl.post.codigoid from PostLike pl where pl.user.codigoid = :id")
+    List<Long> findLikedPostsByUserCodigoid(Long id);
 }
