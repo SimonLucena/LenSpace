@@ -11,4 +11,6 @@ import java.util.List;
 public interface UserFollowRepository extends JpaRepository<UserFollow, Integer> {
     @Query("from UserFollow uf where uf.user.codigoid = :id")
     List<UserFollow> findAllByCodigoid(Long id);
+
+    UserFollow findUserFollowByUserAndFollow(User user, User userFollowing);
 }

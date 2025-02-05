@@ -1,27 +1,47 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seguidores - LenSpace</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <meta th:insert="layouts/main-view :: head">
 </head>
 <body class="bg-light">
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-users"></i> Seguidores</h2>
-        <a th:href="@{/}" class="btn btn-secondary">Voltar</a>
-    </div>
+<div class="container-fluid mt-5 pt-4">
+    <div class="row">
+        <!-- Top -->
+        <div th:replace="layouts/main-view :: header-top"></div>
 
-    <!-- Lista de Seguidores -->
-    <ul class="list-group align-items-center">
-        <h1 th:text="${erroMessage}"></h1>
-        <li class="list-group-item d-flex justify-content-between align-items-center" th:each="follower : ${followerList}">
-            <span><i class="fas fa-user"></i> <span th:text="${follower.username}"></span></span>
-            <button class="btn btn-sm btn-danger">Remover</button>
-        </li>
-    </ul>
+        <!-- Sidebar Esquerda -->
+        <div th:replace="layouts/main-view :: sidebar-left"></div>
+
+        <!-- Container -->
+        <div class="col-md-6">
+            <div class="justify-content-between align-items-center  mb-6">
+                <h2 class="text-center"><i class="fas fa-users"></i> Seguidores</h2>
+            </div>
+
+            <!-- Lista de Seguidores -->
+            <div class="container mt-4">
+                <h1 class="text-center" th:text="${erroMessage}"></h1>
+
+                <ul class="list-group mx-auto" style="max-width: 400px;">  <!-- Define largura máxima uniforme -->
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3" th:each="follower : ${followerList}" style="min-width: 400px;">
+                        <span class="d-flex align-items-center">
+                            <i class="fas fa-user me-2"></i>
+                            <span th:text="${follower.username}"></span>
+                        </span>
+                        <form th:action="@{/unfollow}" method="post">
+                            <input type="hidden" name="followId" th:value="${follower.codigoid}">
+                            <button type="submit" class="btn btn-sm btn-danger px-3">Remover</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sidebar Direita -->
+        <div th:replace="layouts/main-view :: sidebar-right"></div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

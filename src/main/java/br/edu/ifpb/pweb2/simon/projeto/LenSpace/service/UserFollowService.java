@@ -24,17 +24,19 @@ public class UserFollowService {
     public void saveUserFollow(UserFollow userFollow){
         userFollowRepository.save(userFollow);
     }
+    @Transactional
+    public void deleteFollowing(UserFollow userFollow){
+        userFollowRepository.delete(userFollow);
+    }
 
     public List<User> findAllByUserId(Long codigoid) {
-        System.out.println("Codigoid: "+codigoid);
         List<UserFollow> followers = userFollowRepository.findAllByCodigoid(codigoid);
-        System.out.println("Seguidores: "+followers);
         return followers.stream()
                         .map(UserFollow::getFollow)
                         .collect(Collectors.toList());
     }
 
-//    public List<User> findAllFollowByUser(User user){
-//        return userFollowRepository.findAllUsersNotFollowedByUser(user.getCodigoid());
-//    }
+    public UserFollow findFollowing(User user, User userFollowing) {
+        return userFollowRepository.findUserFollowByUserAndFollow(user, userFollowing);
+    }
 }

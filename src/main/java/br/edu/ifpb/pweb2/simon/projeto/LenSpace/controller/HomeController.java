@@ -7,6 +7,7 @@ import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.UserRepository;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserFollowService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,7 +45,7 @@ public class HomeController {
             if (users == null) users = new ArrayList<>();
             if (posts == null) posts = new ArrayList<>();
 
-            model.setViewName("index");
+            model.setViewName("redirect:/");
             model.addObject("user", user);
             model.addObject("usersList", users);
             model.addObject("postsList", posts);
@@ -79,7 +80,7 @@ public class HomeController {
     }
 
     @PostMapping("/follow")
-    public String followUser (@RequestParam("userFollowId") Long userFollowId, HttpSession session){
+    public String followUser (@RequestParam("userFollowId") Long userFollowId, HttpSession session, HttpServletRequest request){
         User userToFollow = userService.findUserById(userFollowId);
         User user = (User) session.getAttribute("usuarioLogado");
 
@@ -90,6 +91,7 @@ public class HomeController {
 
             userFollowService.saveUserFollow(userFollow);
         }
-        return "redirect:/";
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/");
     }
 }
