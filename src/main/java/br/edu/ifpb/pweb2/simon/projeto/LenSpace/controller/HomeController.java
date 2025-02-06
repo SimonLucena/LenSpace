@@ -36,36 +36,23 @@ public class HomeController {
     private PostCommentService postCommentService;
     @Autowired
     private UserFollowService userFollowService;
+    @Autowired
+    private MainService mainService;
 
     @RequestMapping("/")
     public ModelAndView index(ModelAndView model, HttpSession session) {
         User user = (User) session.getAttribute("usuarioLogado");
 
         if (user != null){
-//            List<User> users = userService.findAllOtherUsers(user.getCodigoid());
-            List<User> users = userService.findAllUsersNotFollowedByUserAndActive(user.getCodigoid());
-            List<Post> posts = postService.findAllByActiveUser(user);
-            List<Long> postsCurtidos = postLikeService.getLikedPostsByUser(user);
+            mainService.settarPage(session, model);
 
-            if (users == null) users = new ArrayList<>();
+            List<Post> posts = postService.findAllByActiveUser(user);
+
             if (posts == null) posts = new ArrayList<>();
 
-            Map<Long, Long> likeCounts = new HashMap<>();
-            Map<Long, List<Comment>> postComentarios = new HashMap<>();
-
-            // Calcula o número de curtidas para cada post
-            for (Post post : posts) {
-                likeCounts.put(post.getCodigoid(), postLikeService.countLikes(post.getCodigoid()));
-                postComentarios.put(post.getCodigoid(), postCommentService.findCommentByPostCodigoid(post.getCodigoid()));
-            }
-
             model.setViewName("index");
-            model.addObject("user", user);
-            model.addObject("usersList", users);
-            model.addObject("postsList", posts);
-            model.addObject("postsCurtidos", postsCurtidos);
-            model.addObject("postComentarios", postComentarios);
-            model.addObject("likeCounts", likeCounts);
+
+            mainService.settarPosts(posts, session, model);
         }else{
             model.setViewName("redirect:/login");
         }

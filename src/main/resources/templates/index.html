@@ -32,51 +32,8 @@
                 </div>
             </div>
 
-            <div th:each="post : ${postsList}">
-                <!-- Postagems -->
-                <div class="card mb-3">
-                    <!-- Username -->
-                    <div class="card-header">
-                        <i class="fas fa-user"></i>
-                        <span th:if="${post.user != null}" th:text="${post.user.username}"></span>
-                        <span th:if="${post.user == null}">Usuário Desconhecido</span>
-                    </div>
-                    <!-- Imagem -->
-                    <img th:if="${post.imagem != null}" th:src="@{${post.imagem}}" class="card-img-top" alt="Foto desconhecida">
-
-                    <div class="card-body">
-                        <!-- Legenda -->
-                        <p class="card-text" th:if="${post.legenda != null}" th:text="${post.legenda}"></p>
-
-                        <!-- Curtir -->
-                        <button th:if="${!postsCurtidos.contains(post.getCodigoid())}" class="btn btn-outline-primary like-btn" th:data-postid="${post.getCodigoid()}" th:data-liked="${postsCurtidos.contains(post.getCodigoid())}">
-                            <span id="statusLiked">
-                                <span class="like-count" th:text="${likeCounts[post.codigoid]}">0</span>
-                                <span><i class='fa-solid fa-thumbs-up'></i></span>
-                            </span>
-                        </button>
-                        <button th:if="${postsCurtidos.contains(post.getCodigoid())}" class="btn btn-danger like-btn" th:data-postid="${post.getCodigoid()}" th:data-liked="${postsCurtidos.contains(post.getCodigoid())}">
-                            <span id="statusLiked">
-                                <span class="like-count" th:text="${likeCounts[post.codigoid]}">0</span>
-                                <span><i class='fa-regular fa-thumbs-down'></i></span>
-                            </span>
-                        </button>
-
-                        <!-- Comentário -->
-                        <button class="btn btn-outline-secondary comment-btn" th:data-postid="${post.getCodigoid()}">Comentar</button>
-                        <!-- Área de Comentário Oculta -->
-                        <div class="comment-box mt-2 d-none" th:id="'comment-box-' + ${post.getCodigoid()}">
-                            <textarea class="form-control mb-2" th:id="'comment-text-' + ${post.getCodigoid()}" placeholder="Digite seu comentário..."></textarea>
-                            <button class="btn btn-primary submit-comment" th:data-postid="${post.getCodigoid()}">Enviar</button>
-                        </div>
-                        <!-- Lista de Comentários -->
-                        <div class="comments-list mt-3" th:id="'comments-list-' + ${post.codigoid}">
-                            <div th:each="comment : ${postComentarios[post.getCodigoid()]}">
-                                <p><strong th:text="${comment.getUser().username}"></strong>: <span th:text="${comment.comentario}"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Posts -->
+            <div th:each="post : ${postsList}" th:insert="layouts/main-view :: posts">
             </div>
         </div>
 
@@ -84,7 +41,7 @@
         <div th:replace="layouts/main-view :: sidebar-right"></div>
     </div>
 </div>
-<!-- Sidebar Direita -->
+<!-- Footer -->
 <div th:replace="layouts/main-view :: footer"></div>
 
 <script>
