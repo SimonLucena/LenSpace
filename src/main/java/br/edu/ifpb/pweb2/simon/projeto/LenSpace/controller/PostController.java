@@ -1,7 +1,10 @@
 package br.edu.ifpb.pweb2.simon.projeto.LenSpace.controller;
 
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Comment;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Post;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.PostCommentRepository;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostCommentService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostLikeService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostService;
 import jakarta.servlet.http.HttpSession;
@@ -21,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -29,6 +33,8 @@ public class PostController {
     private PostService postService;
     @Autowired
     private PostLikeService postLikeService;
+    @Autowired
+    private PostCommentService postCommentService;
 
     private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 

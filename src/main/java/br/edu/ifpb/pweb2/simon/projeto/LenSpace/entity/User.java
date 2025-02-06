@@ -69,7 +69,11 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     @Setter
     private Date dataCriacao = new Date();
-    public Date getDataCriacao() {return dataCriacao;}
+    public Date getDataCriacao() {return this.dataCriacao;}
+    public String getDataCriacaoToString() {
+        String retorno = String.format("%s/%s/%s", this.dataCriacao.getDay(), this.dataCriacao.getMonth(), this.dataCriacao.getYear());
+        return retorno;
+    }
 
     @Column(name = "ativo", nullable = false)
     @Setter
