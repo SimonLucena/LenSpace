@@ -31,4 +31,13 @@ public class CommentService {
 
         return comment;
     }
+
+    @Transactional
+    public Comment editComment(Comment comment) {
+        return commentRepository.save(comment);
+    }
+
+    public Comment findCommentByCodigoid(Long commentId) {
+        return commentRepository.findCommentByCodigoid(commentId);
+    }
 }

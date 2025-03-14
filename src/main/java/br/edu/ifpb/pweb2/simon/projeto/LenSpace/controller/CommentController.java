@@ -39,4 +39,27 @@ public class CommentController {
                 "comentario", comentario
         ));
     }
+
+    @PostMapping("editComment")
+    public ResponseEntity<Map<String, Object>> editarComment(HttpSession session,
+                                                             String comentario,
+                                                             Long commentId){
+        User user = (User) session.getAttribute("usuarioLogado");
+        Comment comment = commentService.findCommentByCodigoid(commentId);
+
+        if (user == null || comment == null){
+            return ResponseEntity.badRequest().body(Map.of("error", "Erro ao processar usuário."));
+        }
+
+        comment.setComentario(comentario);
+        System.out.println(comment.comentario);
+
+        Comment editComentario = commentService.editComment(comment);
+
+        return ResponseEntity.ok(Map.of(
+                "comentarioId", editComentario.getCodigoid(),
+                "username", user.username,
+                "comentario", comentario
+        ));
+    }
 }
