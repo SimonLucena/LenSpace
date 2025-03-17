@@ -46,16 +46,16 @@
                                 <td th:text="${user.username}"></td>
                                 <td th:text="${#dates.format(user.getDataCriacao(), 'dd/MM/yyyy')}"></td>
                                 <td>
-                                    <span class="badge" th:classappend="${user.isAtivo()} ? 'bg-success' : 'bg-danger'">
-                                        <span th:text="${user.isAtivo()} ? 'Ativo' : 'Suspenso'"></span>
+                                    <span class="badge" th:classappend="${user.isEnabled()} ? 'bg-success' : 'bg-danger'">
+                                        <span th:text="${user.isEnabled()} ? 'Ativo' : 'Suspenso'"></span>
                                     </span>
                                 </td>
                                 <td>
                                     <form th:action="@{/toggleStatus}" method="post">
                                         <input type="hidden" name="userId" th:value="${user.getCodigoid()}">
                                         <button type="submit" class="btn btn-sm"
-                                                th:classappend="${user.isAtivo()} ? 'btn-danger' : 'btn-success'">
-                                            <span th:text="${user.isAtivo()} ? 'Suspender' : 'Restaurar'"></span>
+                                                th:classappend="${user.isEnabled()} ? 'btn-danger' : 'btn-success'">
+                                            <span th:text="${user.isEnabled()} ? 'Suspender' : 'Restaurar'"></span>
                                         </button>
                                     </form>
                                 </td>

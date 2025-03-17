@@ -3,6 +3,7 @@ package br.edu.ifpb.pweb2.simon.projeto.LenSpace.controller;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @Controller
 public class CadastroController {
     private UserService userService;
+    private PasswordEncoder passwordEncoder;
 
     public static boolean isSenhaValida(String senha) {
         String REGEX_SENHA = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{9,}$";
@@ -49,7 +51,7 @@ public class CadastroController {
         this.userService = userService;
     }
 
-    @RequestMapping("cadastro")
+    @RequestMapping("/cadastro")
     public String showLoginForm() {
         return "form-cadastro";
     }
@@ -99,7 +101,7 @@ public class CadastroController {
         novoUser.setNome(nome);
         novoUser.setUsername(username);
         novoUser.setEmail(email);
-        novoUser.setSenha(senha); // Idealmente, a senha deve ser criptografada
+        novoUser.setSenha(passwordEncoder.encode(senha)); // Idealmente, a senha deve ser criptografada
         novoUser.setDataNascimento(dataNascimentoConvertida);
 
         userService.saveUser(novoUser);

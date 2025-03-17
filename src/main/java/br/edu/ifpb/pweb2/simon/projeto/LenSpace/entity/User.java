@@ -2,10 +2,12 @@ package br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(schema = "lenspace", name = "user")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigoid;
@@ -34,6 +36,10 @@ public class User {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
 
     @Setter
     @Column(name = "nome", nullable = false)
@@ -49,6 +55,10 @@ public class User {
     public String username;
     public void setUsername(String username) {
         this.username = username;
+    }
+    @Override
+    public String getUsername() {
+        return this.username;
     }
 
     @Column(name = "data_nascimento")
@@ -79,5 +89,13 @@ public class User {
     @Setter
     private boolean ativo = true;
     public void setAtivo(boolean ativo) {this.ativo = ativo;}
-    public boolean isAtivo() {return this.ativo;}
+    @Override
+    public boolean isEnabled() {return this.ativo;}
+
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
 }
