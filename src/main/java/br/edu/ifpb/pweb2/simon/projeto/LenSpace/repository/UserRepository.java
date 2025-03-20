@@ -39,4 +39,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("update User u set u.ativo = true where u.codigoid = :id")
     void reativarUserByCodigoid(Long id);
 
+    @Transactional
+    @Modifying
+    @Query("update User u set u.bloqueado = NOT u.bloqueado where u.codigoid = :codigoid")
+    void toggleSuspenderUser(Long codigoid);
 }

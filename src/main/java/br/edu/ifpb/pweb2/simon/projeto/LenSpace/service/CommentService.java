@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CommentService {
     @Autowired
@@ -30,5 +32,18 @@ public class CommentService {
         postCommentRepository.save(postComment);
 
         return comment;
+    }
+
+    @Transactional
+    public void editComment(Comment comment) {
+        commentRepository.updadeCommentText(comment.comentario, comment.getCodigoid());
+    }
+
+    public Comment findCommentByCodigoid(Long commentId) {
+        return commentRepository.findCommentByCodigoid(commentId);
+    }
+
+    public void deleteComment(Long commentId) {
+        commentRepository.deleteCommentByCodigoid(commentId);
     }
 }

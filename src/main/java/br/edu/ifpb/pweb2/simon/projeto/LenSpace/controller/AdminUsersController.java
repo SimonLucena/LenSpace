@@ -47,4 +47,13 @@ public class AdminUsersController {
         }
         return "redirect:/adminUsers";
     }
+
+    @PostMapping("/toggleSuspensao")
+    public String toggleSuspensao(Long userId) {
+        User user = userService.findUserById(userId);
+        if (user != null) {
+            userService.toggleSuspenderUser(userId);
+        }
+        return "redirect:/";
+    }
 }

@@ -2,23 +2,26 @@ package br.edu.ifpb.pweb2.simon.projeto.LenSpace.service;
 
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Comment;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Post;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Tag;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.PostRepository;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.TagRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class PostService {
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
@@ -26,6 +29,7 @@ public class PostService {
 
     @Transactional
     public void savePost(Post post) {
+        List<Tag> tags = extrairTags(post.getLegenda());
         postRepository.save(post);
     }
 
@@ -39,5 +43,28 @@ public class PostService {
 
     public Post findByCodigoid(Long postId) {
         return postRepository.findPostByCodigoid(postId);
+    }
+
+    public List<Tag> extrairTags(String legenda) {
+        List<Tag> Tags = new ArrayList<>();
+
+        if (legenda != null) {
+            Pattern pattern = Pattern.compile("#\\w+"); // Captura palavras iniciadas com #
+            Matcher matcher = pattern.matcher(legenda);
+
+            while (matcher.find()) {
+                String tagText = matcher.group().toLowerCase();
+                Tag existingTag = tagRepository.findTagByTag(tagText);
+
+                if (existingTag == null) {
+                    existingTag = new Tag();
+                    existingTag.setTag(tagText);
+                    existingTag = tagRepository.save(existingTag);
+                }
+
+                Tags.add(existingTag);
+            }
+        }
+        return Tags;
     }
 }

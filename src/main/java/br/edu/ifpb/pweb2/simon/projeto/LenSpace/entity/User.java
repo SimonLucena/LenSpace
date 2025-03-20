@@ -80,4 +80,10 @@ public class User {
     private boolean ativo = true;
     public void setAtivo(boolean ativo) {this.ativo = ativo;}
     public boolean isAtivo() {return this.ativo;}
+
+    @Column(name = "bloqueado", nullable = false)
+    @Setter
+    public boolean bloqueado = true;
+    public void setBloqueado(boolean bloqueado) {this.bloqueado = bloqueado;}
+    public boolean isBloqueado() {return this.bloqueado;}
 }

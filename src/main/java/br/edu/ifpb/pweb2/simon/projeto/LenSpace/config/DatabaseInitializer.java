@@ -89,6 +89,8 @@ public class DatabaseInitializer {
                 postRepository.save(postUser3);
 
                 System.out.println("Cadastros iniciais realizados com sucesso");
+            }else {
+                System.out.println("Usuários  já cadastrados.");
             }
         };
     }

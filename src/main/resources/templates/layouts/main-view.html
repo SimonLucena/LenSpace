@@ -69,12 +69,13 @@
 <!-- Postagems -->
 <div th:fragment="posts" class="card mb-3">
     <!-- Username -->
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <a th:href="@{/perfil/{username}(username=${post.user.username})}">
             <i class="fas fa-user"></i>
             <span th:if="${post.user != null}" th:text="${post.user.username}"></span>
             <span th:if="${post.user == null}">Usuário Desconhecido</span>
         </a>
+        <a th:if="${user.administrador}" th:href="@{/export-comment/{postid}(postid=${post.getCodigoid()})}" class="btn btn-sm btn-primary gerar-pdf">Gerar PDF</a>
     </div>
     <!-- Imagem -->
     <img th:if="${post.imagem != null}" th:src="@{${post.imagem}}" class="card-img-top" alt="Foto desconhecida">
@@ -106,16 +107,236 @@
         </div>
         <!-- Lista de Comentários -->
         <div class="comments-list mt-3" th:id="'comments-list-' + ${post.codigoid}">
-            <div th:each="comment : ${postComentarios[post.getCodigoid()]}">
-                <p>
-                    <a th:href="@{/perfil/{username}(username=${comment.getUser().username})}">
-                        <strong th:text="${comment.getUser().username}"></strong>:
-                    </a>
-                    <span th:text="${comment.comentario}"></span>
+            <div th:each="comment : ${postComentarios[post.getCodigoid()]}" th:id="'comment-item-' + ${comment.codigoid}">
+                <p  class="d-flex align-items-center" th:if="${comment.getUser() != null and (comment.getUser().bloqueado == false)}">
+                    <!-- Botão de Opções (Aparece apenas se o usuário for o dono do comentário) -->
+                    <div class="dropdown me-2">
+                        <button class="dropdown-toggle no-caret border-0 bg-transparent p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <strong th:text="${comment.getUser().username}"></strong>:
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item edit-comment-btn" th:href="@{/perfil/{username}(username=${comment.getUser().username})}">Perfil</a></li>
+                            <li th:if="${user.codigoid == comment.getUser().codigoid}"><button class="dropdown-item edit-comment-btn"  th:data-commentid="${comment.codigoid}">Editar</button></li>
+                            <li th:if="${user.codigoid == comment.getUser().codigoid}"><button class="dropdown-item delete-comment-btn" th:data-commentid="${comment.codigoid}">Excluir</button></li>
+                            <li th:if="${user.administrador}"><button class="dropdown-item suspender-user-btn" th:data-commentid="${comment.codigoid}" th:data-comment-userid="${comment.getUser().codigoid}">Suspender</button></li>
+                        </ul>
+                    </div>
+                    <!-- Comentário (Texto ou Input Editável) -->
+                    <span class="comment-text ms-2" th:text="${comment.comentario}" th:id="'comment-edit-text-' + ${comment.codigoid}"></span>
+
+                    <!-- Input para edição (escondido por padrão) -->
+                    <textarea class="form-control d-none comment-edit-input ms-2" th:text="${comment.comentario}" th:id="'comment-edit-' + ${comment.codigoid}"></textarea>
+
+                    <!-- Botão de Confirmar Alteração (escondido por padrão) -->
+                    <button class="btn btn-success btn-sm d-none confirm-edit-btn ms-2" th:id="'comment-confirm-edit-btn-' + ${comment.codigoid}" th:data-commentid="${comment.codigoid}">
+                        Confirmar
+                    </button>
                 </p>
             </div>
         </div>
     </div>
+
+    <script>
+        // Confirmar edição
+        document.querySelectorAll(".confirm-edit-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                confirm("Tem certeza que deseja editar o conteúdo do comentário?");
+
+                const commentId = this.getAttribute("data-commentid");
+                const commentText = document.getElementById("comment-edit-" + commentId).value.trim();
+
+                if (commentText === "") {
+                    alert("O comentário não pode estar vazio!");
+                    return;
+                }
+
+                fetch("/lenspace/editComment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `commentId=${commentId}&comentario=${encodeURIComponent(commentText)}`
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            // Atualiza a lista de comentários
+                            const commentsEdit = document.getElementById("comment-edit-text-" + commentId);
+                            commentsEdit.innerHTML = commentText;
+
+                            const comment = document.getElementById("comment-edit-text-" + commentId);
+                            const editcommentBox = document.getElementById("comment-edit-" + commentId);
+                            const editsubmitbtn = document.getElementById("comment-confirm-edit-btn-"+commentId);
+                            comment.classList.toggle("d-none");
+                            editcommentBox.classList.toggle("d-none");
+                            editsubmitbtn.classList.toggle("d-none");
+                        }
+                    })
+                    .catch(error => console.error("Erro ao comentar:", error));
+            });
+        });
+
+        // CADASTRO E ATUALIZAÇÃO DE COMENTÁRIO
+        document.querySelectorAll(".comment-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const postId = this.getAttribute("data-postid");
+                const commentBox = document.getElementById("comment-box-" + postId);
+                commentBox.classList.toggle("d-none");
+            });
+        });
+
+        document.querySelectorAll(".edit-comment-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const commentId = this.getAttribute("data-commentid");
+                const comment = document.getElementById("comment-edit-text-" + commentId);
+                const editcommentBox = document.getElementById("comment-edit-" + commentId);
+                const editsubmitbtn = document.getElementById("comment-confirm-edit-btn-"+commentId);
+                comment.classList.toggle("d-none");
+                editcommentBox.classList.toggle("d-none");
+                editsubmitbtn.classList.toggle("d-none");
+            });
+        });
+
+        document.querySelectorAll(".submit-comment").forEach(button => {
+            button.addEventListener("click", function () {
+                const postId = this.getAttribute("data-postid");
+                const commentText = document.getElementById("comment-text-" + postId).value.trim();
+
+                if (commentText === "") {
+                    alert("O comentário não pode estar vazio!");
+                    return;
+                }
+
+                fetch("/lenspace/saveComment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `postId=${postId}&comentario=${encodeURIComponent(commentText)}`
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            // Atualiza a lista de comentários
+                            const commentsList = document.getElementById("comments-list-" + postId);
+                            const newComment = document.createElement("p");
+                            newComment.innerHTML = `<strong>${data.username}</strong>: ${data.comentario}`;
+                            commentsList.appendChild(newComment);
+
+                            // Limpa o campo de comentário
+                            document.getElementById("comment-text-" + postId).value = "";
+                        }
+                    })
+                    .catch(error => console.error("Erro ao comentar:", error));
+            });
+        });
+
+        // EXCLUIR COMENTÁRIO
+        document.querySelectorAll(".delete-comment-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const commentId = this.getAttribute("data-commentid");
+
+                // Confirmação antes de excluir
+                if (!confirm("Tem certeza que deseja excluir este comentário?")) {
+                    return;
+                }
+
+                fetch("/lenspace/deleteComment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `commentId=${commentId}`
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove o comentário da interface sem dar refresh
+                            const commentElement = document.getElementById(`comment-item-${commentId}`);
+                            if (commentElement) {
+                                commentElement.remove();
+                            }
+                        } else {
+                            alert("Erro ao excluir o comentário: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Erro ao excluir comentário:", error));
+            });
+        });
+
+        // SUSPENDER USER
+        document.querySelectorAll(".suspender-user-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const commentId = this.getAttribute("data-commentid");
+                const userId = this.getAttribute("data-comment-userid");
+
+                // Confirmação antes de excluir
+                if (!confirm("Tem certeza que deseja suspender o usuário?")) {
+                    return;
+                }
+
+                fetch("/lenspace/toggleSuspensao", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `userId=${userId}`
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove o comentário da interface sem dar refresh
+                            const commentElement = document.getElementById(`comment-item-${commentId}`);
+                            if (commentElement) {
+                                commentElement.remove();
+                            }
+                        } else {
+                            alert("Erro ao excluir o comentário: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Erro ao excluir comentário:", error));
+            });
+        });
+
+        // CURTIR POSTAGEM
+        document.querySelectorAll(".like-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const postId = this.getAttribute("data-postid");
+                const curtido = this.getAttribute("data-liked") === "true";
+                fetch("/lenspace/like", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "postId=" + postId
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            this.setAttribute("data-liked", data.liked);
+                            this.classList.toggle("btn-danger", data.liked);
+                            this.classList.toggle("btn-outline-primary", !data.liked);
+                            const mudarIcone = this.querySelector("#statusLiked");
+                            mudarIcone.innerHTML = " <span class='like-count'>" + data.likeCount + "</span> " + (data.liked ?  "<i class='fa-regular fa-thumbs-down'></i>" : "<i class='fa-solid fa-thumbs-up'>")
+                        }
+                    })
+                    .catch(error => console.error("Erro:", error));
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".card-text").forEach(function(element) {
+                let text = element.innerHTML;
+                let updatedText = text.replace(/#(\w+)/g, '<a href="/lenspace/hashtag/$1" class="hashtag-link">#$1</a>');
+                element.innerHTML = updatedText;
+            });
+        });
+    </script>
 </div>
 
 </body>
