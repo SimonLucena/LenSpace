@@ -21,7 +21,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
-                        .loginPage("lenspace/login")
+                        .loginPage("/login")
                         .defaultSuccessUrl("/index")
                         .permitAll()
                 )
