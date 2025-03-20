@@ -72,8 +72,4 @@ public class UserService {
     public List<User> findAllUsersNotFollowedByUserAndActive(Long codigoid) {
         return userRepository.findAllUsersNotFollowedByUserAndActive(codigoid);
     }
-
-    public User findUserByEmailOrUsername(String emailUsername) {
-        return userRepository.findUserByEmailOrUsername(emailUsername);
-    }
 }
