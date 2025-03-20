@@ -99,7 +99,7 @@
         </button>
 
         <!-- Comentário -->
-        <button class="btn btn-outline-secondary comment-btn" th:data-postid="${post.getCodigoid()}">Comentar</button>
+        <button th:if="${user.bloqueado == false}" class="btn btn-outline-secondary comment-btn" th:data-postid="${post.getCodigoid()}">Comentar</button>
         <!-- Área de Comentário Oculta -->
         <div class="comment-box mt-2 d-none" th:id="'comment-box-' + ${post.getCodigoid()}">
             <textarea class="form-control mb-2" th:id="'comment-text-' + ${post.getCodigoid()}" placeholder="Digite seu comentário..."></textarea>
