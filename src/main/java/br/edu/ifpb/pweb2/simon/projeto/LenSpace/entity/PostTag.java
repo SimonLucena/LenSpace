@@ -18,7 +18,15 @@ public class PostTag {
     @JoinColumn(name = "codigoid_tag", nullable = false)
     private Tag tag;
 
+    public void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
     @ManyToOne
     @JoinColumn(name = "codigoid_post", nullable = false)
     private Post post;
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }
