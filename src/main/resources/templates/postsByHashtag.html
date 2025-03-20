@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Posts com #' + ${hashtag.tag}"></title>
+    <meta th:insert="layouts/main-view :: head">
+</head>
+<body>
+<div class="container-fluid mt-5 pt-4">
+    <div class="row">
+        <!-- Top -->
+        <div th:replace="layouts/main-view :: header-top"></div>
+
+        <!-- Sidebar Esquerda -->
+        <div th:replace="layouts/main-view :: sidebar-left"></div>
+
+        <!-- Feed Central -->
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <!-- Campo para postar -->
+                <div class="card-body">
+                    <h1 th:text="'Posts de ' + ${hashtag.tag}"></h1>
+
+                    <!-- Exibe mensagem de erro, se houver -->
+                    <div th:if="${mensagemErro}">
+                        <p th:text="${mensagemErro}"></p>
+                    </div>
+
+                    <!-- Posts -->
+                    <div th:each="post : ${posts}" th:insert="layouts/main-view :: posts">
+
+                    <!-- Lista de Posts -->
+                    <div th:each="post : ${posts}">
+                        <h3 th:text="${post.user.username}"></h3>
+                        <p th:text="${post.legenda}"></p>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+
+    </div>
+    <!-- Sidebar Direita -->
+    <div th:replace="layouts/main-view :: sidebar-right"></div>
+</div>
+<!-- Footer -->
+<div th:replace="layouts/main-view :: footer"></div>
+</body>
+</html>

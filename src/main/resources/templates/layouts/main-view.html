@@ -69,12 +69,13 @@
 <!-- Postagems -->
 <div th:fragment="posts" class="card mb-3">
     <!-- Username -->
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <a th:href="@{/perfil/{username}(username=${post.user.username})}">
             <i class="fas fa-user"></i>
             <span th:if="${post.user != null}" th:text="${post.user.username}"></span>
             <span th:if="${post.user == null}">Usuário Desconhecido</span>
         </a>
+        <a th:if="${user.administrador}" th:href="@{/export-comment/{postid}(postid=${post.getCodigoid()})}" class="btn btn-sm btn-primary gerar-pdf">Gerar PDF</a>
     </div>
     <!-- Imagem -->
     <img th:if="${post.imagem != null}" th:src="@{${post.imagem}}" class="card-img-top" alt="Foto desconhecida">
@@ -141,8 +142,8 @@
             button.addEventListener("click", function () {
                 confirm("Tem certeza que deseja editar o conteúdo do comentário?");
 
-                const postId = this.getAttribute("data-commentid");
-                const commentText = document.getElementById("comment-edit-text-" + postId).innerHTML.trim();
+                const commentId = this.getAttribute("data-commentid");
+                const commentText = document.getElementById("comment-edit-" + commentId).value.trim();
 
                 if (commentText === "") {
                     alert("O comentário não pode estar vazio!");
@@ -154,23 +155,25 @@
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
-                    body: `commentId=${postId}&comentario=${encodeURIComponent(commentText)}`
+                    body: `commentId=${commentId}&comentario=${encodeURIComponent(commentText)}`
                 })
-                    // .then(response => response.json())
-                    // .then(data => {
-                    //     if (data.error) {
-                    //         alert(data.error);
-                    //     } else {
-                    //         // Atualiza a lista de comentários
-                    //         const commentsList = document.getElementById("comments-list-" + postId);
-                    //         const newComment = document.createElement("p");
-                    //         newComment.innerHTML = `<strong>${data.username}</strong>: ${data.comentario}`;
-                    //         commentsList.appendChild(newComment);
-                    //
-                    //         // Limpa o campo de comentário
-                    //         document.getElementById("comment-text-" + postId).value = "";
-                    //     }
-                    // })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            // Atualiza a lista de comentários
+                            const commentsEdit = document.getElementById("comment-edit-text-" + commentId);
+                            commentsEdit.innerHTML = commentText;
+
+                            const comment = document.getElementById("comment-edit-text-" + commentId);
+                            const editcommentBox = document.getElementById("comment-edit-" + commentId);
+                            const editsubmitbtn = document.getElementById("comment-confirm-edit-btn-"+commentId);
+                            comment.classList.toggle("d-none");
+                            editcommentBox.classList.toggle("d-none");
+                            editsubmitbtn.classList.toggle("d-none");
+                        }
+                    })
                     .catch(error => console.error("Erro ao comentar:", error));
             });
         });
@@ -324,6 +327,13 @@
                         }
                     })
                     .catch(error => console.error("Erro:", error));
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".card-text").forEach(function(element) {
+                let text = element.innerHTML;
+                let updatedText = text.replace(/#(\w+)/g, '<a href="/lenspace/hashtag/$1" class="hashtag-link">#$1</a>');
+                element.innerHTML = updatedText;
             });
         });
     </script>

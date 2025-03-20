@@ -55,14 +55,15 @@ public class CommentController {
             return ResponseEntity.badRequest().body(Map.of("error", "Erro ao processar usuário."));
         }
 
+        System.out.println(comentario);
         comment.setComentario(comentario);
         System.out.println(comment.comentario);
 
-        Comment editComentario = commentService.editComment(comment);
+        commentService.editComment(comment);
 
         return ResponseEntity.ok(Map.of(
-                "comentarioId", editComentario.getCodigoid(),
-                "username", user.username,
+                "comentarioId", comment.getCodigoid(),
+//                "username", user.username,
                 "comentario", comentario
         ));
     }
