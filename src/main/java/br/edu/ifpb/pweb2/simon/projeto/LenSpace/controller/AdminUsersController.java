@@ -38,8 +38,8 @@ public class AdminUsersController {
     public String toggleStatus(Long userId) {
         User user = userService.findUserById(userId);
         if (user != null) {
-            System.out.println(user.isEnabled());
-            if(user.isEnabled()){
+            System.out.println(user.isAtivo());
+            if(user.isAtivo()){
                 userService.desativarUser(user);
             }else{
                 userService.reativarUser(user);

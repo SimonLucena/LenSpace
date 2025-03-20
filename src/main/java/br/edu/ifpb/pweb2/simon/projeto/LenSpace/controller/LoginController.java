@@ -4,7 +4,6 @@ import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,7 +18,6 @@ import java.util.List;
 @Controller
 public class LoginController {
     private UserService userService;
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public LoginController(UserService userService) {
@@ -39,13 +37,12 @@ public class LoginController {
     @PostMapping("/processLogin")
     public ModelAndView processLoginForm(String emailUsername, String senha, HttpSession session) {
         ModelAndView model = new ModelAndView();
-        System.out.println(passwordEncoder.encode(senha));
-        User user = userService.findUserByEmailOrUsernameAndSenha(emailUsername, passwordEncoder.encode(senha));
+        User user = userService.findUserByEmailOrUsernameAndSenha(emailUsername, senha);
 
-        if(user != null){
+        if(!user.isAtivo()){
             model.setViewName("form-login");
             model.addObject("mensagemErro", "Usuário suspenso por administação.");
-        }else if(!user.isEnabled()){
+        }else if(user != null){
             session.setAttribute("usuarioLogado", user);
             model.setViewName("redirect:/");
         }else{
