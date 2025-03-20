@@ -39,9 +39,11 @@ public class HomeController {
     @Autowired
     private MainService mainService;
 
-    @RequestMapping("/")
+    @RequestMapping("/home")
     public ModelAndView index(ModelAndView model, HttpSession session) {
         User user = (User) session.getAttribute("usuarioLogado");
+
+        System.out.println("Usuário Logado: " + user.username);
 
         if (user != null){
             mainService.settarPage(session, model);

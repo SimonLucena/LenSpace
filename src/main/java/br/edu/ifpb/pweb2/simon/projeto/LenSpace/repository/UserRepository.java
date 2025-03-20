@@ -39,4 +39,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("update User u set u.ativo = true where u.codigoid = :id")
     void reativarUserByCodigoid(Long id);
 
+    @Query("from User u where u.email = :emailUsername or u.username = :emailUsername")
+    User findUserByEmailOrUsername(String emailUsername);
 }
