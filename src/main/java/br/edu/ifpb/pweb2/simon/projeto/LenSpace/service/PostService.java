@@ -1,10 +1,8 @@
 package br.edu.ifpb.pweb2.simon.projeto.LenSpace.service;
 
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Comment;
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Post;
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Tag;
-import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.*;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.PostRepository;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.PostTagRepository;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.repository.TagRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -22,6 +20,8 @@ public class PostService {
     private PostRepository postRepository;
     @Autowired
     private TagRepository tagRepository;
+    @Autowired
+    private PostTagRepository postTagRepository;
 
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
@@ -29,8 +29,8 @@ public class PostService {
 
     @Transactional
     public void savePost(Post post) {
-        List<Tag> tags = extrairTags(post.getLegenda());
         postRepository.save(post);
+        List<Tag> tags = extrairTags(post);
     }
 
     public List<Post> findAllByUser(User user) {
@@ -45,7 +45,8 @@ public class PostService {
         return postRepository.findPostByCodigoid(postId);
     }
 
-    public List<Tag> extrairTags(String legenda) {
+    public List<Tag> extrairTags(Post post) {
+        String legenda = post.getLegenda();
         List<Tag> Tags = new ArrayList<>();
 
         if (legenda != null) {
@@ -63,6 +64,11 @@ public class PostService {
                 }
 
                 Tags.add(existingTag);
+
+                PostTag postTag = new PostTag();
+                postTag.setPost(post);
+                postTag.setTag(existingTag);
+                postTag = postTagRepository.save(postTag);
             }
         }
         return Tags;
