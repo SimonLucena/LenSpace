@@ -72,4 +72,8 @@ public class UserService {
     public List<User> findAllUsersNotFollowedByUserAndActive(Long codigoid) {
         return userRepository.findAllUsersNotFollowedByUserAndActive(codigoid);
     }
+
+    public void toggleSuspenderUser(Long codigoid) {
+        userRepository.toggleSuspenderUser(codigoid);
+    }
 }

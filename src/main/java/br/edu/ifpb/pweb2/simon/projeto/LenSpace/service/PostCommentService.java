@@ -16,4 +16,8 @@ public class PostCommentService {
     public List<Comment> findCommentByPostCodigoid(Long codigoid) {
         return postCommentRepository.findCommentByPostCodigoid(codigoid);
     }
+
+    public void deleteByCommentId(Long commentId) {
+        postCommentRepository.deleteByCommentId(commentId);
+    }
 }

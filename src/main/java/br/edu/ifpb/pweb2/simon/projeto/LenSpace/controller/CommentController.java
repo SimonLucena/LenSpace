@@ -4,6 +4,7 @@ import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Comment;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.Post;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.entity.User;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.CommentService;
+import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostCommentService;
 import br.edu.ifpb.pweb2.simon.projeto.LenSpace.service.PostService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 public class CommentController {
     @Autowired
     CommentService commentService;
+    @Autowired
+    PostCommentService postCommentService;
     @Autowired
     PostService postService;
 
@@ -61,5 +65,25 @@ public class CommentController {
                 "username", user.username,
                 "comentario", comentario
         ));
+    }
+
+    @PostMapping("/deleteComment")
+    public ResponseEntity<Map<String, Object>> deleteComment(Long commentId) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 1️⃣ Excluir todos os PostComment relacionados ao comentário
+            postCommentService.deleteByCommentId(commentId);
+
+            // 2️⃣ Agora excluir o próprio comentário
+            commentService.deleteComment(commentId);
+
+            response.put("success", true);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", "Erro ao excluir comentário: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

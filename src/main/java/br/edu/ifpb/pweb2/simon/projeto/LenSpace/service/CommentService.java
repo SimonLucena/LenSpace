@@ -40,4 +40,8 @@ public class CommentService {
     public Comment findCommentByCodigoid(Long commentId) {
         return commentRepository.findCommentByCodigoid(commentId);
     }
+
+    public void deleteComment(Long commentId) {
+        commentRepository.deleteCommentByCodigoid(commentId);
+    }
 }
